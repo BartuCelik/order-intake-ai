@@ -23,10 +23,12 @@ panel, and it is tracked there.
 3. The flow sends the result to the panel, which judges it against **business data** (customer and SKUs exist,
    products are Finished, no duplicate `externalOrderNo`) and creates the sales order. The panel additions
    (order requests, exact lookups, external order number, service credential for the flow) are built in the panel repo.
-4. Teams messages: order created, needs review, low stock.
+4. Teams messages (notify only, with a link to the panel): order created, needs review, low stock.
 
-Open decision (owner): whether requests that are not OK also land in the panel as a review queue, or are handled
-only in Power Automate (Teams approval).
+Owner decision 2026-11-01: **every request lands in the panel**, not only the OK ones. Requests with missing fields,
+low confidence or unmatched customer/SKUs wait there as "needs review"; a planner fixes the mapping and turns the
+request into a sales order or rejects it. One place to track every e-mail, none is lost. Teams only notifies and
+links to the request in the panel; there is no approval step in Power Automate.
 
 ## Architecture rules
 - The Power Automate flow only orchestrates. All AI extraction logic lives in this API.
@@ -52,7 +54,7 @@ only in Power Automate (Teams approval).
 - The LLM must never invent values. Unknown string fields are `""` (never `null`, so the flow's Parse JSON step does not break) and their path is added to `missingFields` (e.g. `"externalOrderNo"`, `"items[1].sku"`).
 - `dueDate` (added 2026-11-01, the panel requires it on a sales order) follows the same rule: not in the PDF → `""` and listed in `missingFields`; it is never derived from `orderDate`. A `dueDate` before `orderDate` is invalid.
 - `confidence` is 0–1. The API does **not** trust the model's self-reported value blindly: deterministic validation (missing required fields, quantity <= 0, invalid date, invalid e-mail) adds to `missingFields` and caps `confidence`.
-- Flow decision rule: `missingFields` not empty → manual review (no order created); otherwise `confidence < 0.8` → human approval; otherwise the order is created automatically.
+- Decision rule (applied by the panel when the request arrives): `missingFields` not empty → needs review (no order created); otherwise `confidence < 0.8` → needs approval in the panel; otherwise the order is created automatically.
 
 ## Code conventions
 - C#, latest language features, nullable enabled, file-scoped namespaces.
