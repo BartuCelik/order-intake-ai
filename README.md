@@ -16,6 +16,7 @@ dotnet run            # http://localhost:5280/health
 ```
 
 Every endpoint except `/health` and the OpenAPI document needs the key in the `X-Api-Key` header.
+The OpenAPI document is served as Swagger 2.0 (what Power Automate custom connectors import) at `/openapi/v1.json`.
 
 ```sh
 dotnet test           # from the repository root

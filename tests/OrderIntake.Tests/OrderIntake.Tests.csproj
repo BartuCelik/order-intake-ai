@@ -8,4 +8,8 @@
     <ProjectReference Include="..\..\src\OrderIntake.Api\OrderIntake.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.13" />
+  </ItemGroup>
+
 </Project>

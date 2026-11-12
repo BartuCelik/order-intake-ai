@@ -65,7 +65,7 @@ links to the request in the panel; there is no approval step in Power Automate.
 - Options pattern for configuration; secrets via `dotnet user-secrets` locally and app settings in Azure. Never commit keys; keep `appsettings.json` free of secrets.
 - Never log PDF contents or extracted customer data; log file name, size, timing, and outcome only.
 - Prefer minimal dependencies. Ask before adding a new NuGet package not listed here.
-  Approved: PdfPig, `Azure.AI.OpenAI`, xunit.v3.
+  Approved: PdfPig, `Azure.AI.OpenAI`, xunit.v3, `Microsoft.AspNetCore.OpenApi`, `Microsoft.AspNetCore.Mvc.Testing` (tests only).
 
 ## Data rules
 - All test data is fictional (invented companies, SKUs, people, `.example` e-mail domains).
@@ -78,6 +78,6 @@ links to the request in the panel; there is no approval step in Power Automate.
 ## Current status
 - [x] Step 1 — Skeleton: solution, minimal API with `/health`, `X-Api-Key` middleware (SHA-256 + `FixedTimeEquals`,
       key validated at startup, min. 32 chars), ProblemDetails, xUnit tests.
-- [ ] Step 2 — OpenAPI as Swagger 2.0 (check whether the built-in generator + `Microsoft.OpenApi` can serialize 2.0
-      before asking for Swashbuckle).
+- [x] Step 2 — OpenAPI as Swagger 2.0: built-in generator (`OpenApiVersion = OpenApi2_0`, no Swashbuckle) at
+      `/openapi/v1.json`, `X-Api-Key` security definition, tests via `WebApplicationFactory`.
 - [ ] PDF text extraction (PdfPig), size/page limit, validator, LLM extractor, `POST /orders/parse`.
